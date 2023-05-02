@@ -77,8 +77,9 @@ public interface PageParser {
        */
       Result build() {
         return new Result(
-            Collections.unmodifiableMap(wordCounts),
-            links.stream().collect(Collectors.toUnmodifiableList()));
+                Collections.unmodifiableMap(wordCounts),
+                links.stream().collect(Collectors.toUnmodifiableList()));
+
       }
     }
   }

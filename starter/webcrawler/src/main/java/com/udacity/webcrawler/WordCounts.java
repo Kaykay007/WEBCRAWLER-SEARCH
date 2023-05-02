@@ -1,9 +1,7 @@
 package com.udacity.webcrawler;
 
-import java.util.Comparator;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.PriorityQueue;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Utility class that sorts the map of word counts.
@@ -15,7 +13,7 @@ final class WordCounts {
 
   /**
    * Given an unsorted map of word counts, returns a new map whose word counts are sorted according
-   * to the provided {@link WordCountComparator}, and includes only the top
+   * to the provided {@link  WordCountComparator}, and includes only the top
    * {@param popluarWordCount} words and counts.
    *
    * <p>TODO: Reimplement this method using only the Stream API and lambdas and/or method
@@ -29,7 +27,7 @@ final class WordCounts {
 
     // TODO: Reimplement this method using only the Stream API and lambdas and/or method references.
 
-    PriorityQueue<Map.Entry<String, Integer>> sortedCounts =
+/*    PriorityQueue<Map.Entry<String, Integer>> sortedCounts =
         new PriorityQueue<>(wordCounts.size(), new WordCountComparator());
     sortedCounts.addAll(wordCounts.entrySet());
     Map<String, Integer> topCounts = new LinkedHashMap<>();
@@ -37,19 +35,27 @@ final class WordCounts {
       Map.Entry<String, Integer> entry = sortedCounts.poll();
       topCounts.put(entry.getKey(), entry.getValue());
     }
-    return topCounts;
+   return topCounts;*/
+
+    WordCountComparator comparator = new WordCountComparator();
+    return wordCounts.entrySet().stream()
+            .filter(Objects::nonNull)
+            .sorted(comparator)
+            .limit(Math.min(popularWordCount, wordCounts.size()))
+            .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (a, b) -> a, LinkedHashMap::new));
   }
 
-  /**
-   * A {@link Comparator} that sorts word count pairs correctly:
-   *
-   * <p>
-   * <ol>
-   *   <li>First sorting by word count, ranking more frequent words higher.</li>
-   *   <li>Then sorting by word length, ranking longer words higher.</li>
-   *   <li>Finally, breaking ties using alphabetical order.</li>
-   * </ol>
-   */
+    /**
+     * A {@link Comparator} that sorts word count pairs correctly:
+     *
+     * <p>
+     * <ol>
+     *   <li>First sorting by word count, ranking more frequent words higher.</li>
+     *   <li>Then sorting by word length, ranking longer words higher.</li>
+     *   <li>Finally, breaking ties using alphabetical order.</li>
+     * </ol>
+     */
+
   private static final class WordCountComparator implements Comparator<Map.Entry<String, Integer>> {
     @Override
     public int compare(Map.Entry<String, Integer> a, Map.Entry<String, Integer> b) {

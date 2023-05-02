@@ -26,4 +26,5 @@ public final class CloseableStringWriter extends StringWriter {
   public boolean isClosed() {
     return closed;
   }
+
 }

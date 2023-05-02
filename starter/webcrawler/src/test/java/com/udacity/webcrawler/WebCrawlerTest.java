@@ -116,43 +116,81 @@ public final class WebCrawlerTest {
     assertThat(result.getUrlsVisited()).isEqualTo(0);
     assertThat(result.getWordCounts()).isEmpty();
   }
-
   @ParameterizedTest
   @MethodSource("provideTestParameters")
   public void testBasicCrawl(Class<?> crawlerClass) {
     CrawlerConfiguration config =
-        new CrawlerConfiguration.Builder()
-            .setImplementationOverride(crawlerClass.getName())
-            .setMaxDepth(10)
-            .setPopularWordCount(3)
-            .addStartPages(Paths.get(DATA_DIR, "test-page.html").toUri().toString())
-            .build();
+            new CrawlerConfiguration.Builder()
+                    .setImplementationOverride(crawlerClass.getName())
+                    .setMaxDepth(10)
+                    .setPopularWordCount(3)
+                    .addStartPages(Paths.get(DATA_DIR, "test-page.html").toUri().toString())
+                    .build();
     Guice.createInjector(new WebCrawlerModule(config), new NoOpProfilerModule())
-        .injectMembers(this);
+            .injectMembers(this);
     assertThat(crawler.getClass()).isAssignableTo(crawlerClass);
 
     CrawlResult result = crawler.crawl(config.getStartPages());
 
     assertWithMessage("Returned the wrong number of popular words")
-        .that(result.getUrlsVisited())
-        .isEqualTo(3);
+            .that(result.getUrlsVisited())
+            .isEqualTo(3);
     assertWithMessage("Returned the correct number of popular words, but the wrong words or counts")
-        .that(result.getWordCounts())
-        .containsEntry("the", 4);
+            .that(result.getWordCounts())
+            .containsEntry("the", 4);
     assertWithMessage("Returned the correct number of popular words, but the wrong words or counts")
-        .that(result.getWordCounts())
-        .containsEntry("jumped", 2);
+            .that(result.getWordCounts())
+            .containsEntry("jumped", 2);
     assertWithMessage("Returned the correct number of popular words, but the wrong words or counts")
-        .that(result.getWordCounts())
-        .containsEntry("brown", 2);
+            .that(result.getWordCounts())
+            .containsEntry("brown", 2);
     assertWithMessage("Returned the correct words, but they are in the wrong order")
-        .that(result.getWordCounts().entrySet())
-        .containsExactly(
-            Map.entry("the", 4),
-            Map.entry("jumped", 2),
-            Map.entry("brown", 2))
-        .inOrder();
+            .that(result.getWordCounts().entrySet())
+            .containsExactly(
+                    Map.entry("the", 4),
+                    Map.entry("jumped", 2),
+                    Map.entry("brown", 2))
+            .inOrder();
   }
+
+
+//  @ParameterizedTest
+//  @MethodSource("provideTestParameters")
+//  public void testBasicCrawl(Class<?> crawlerClass) {
+//    System.setProperty("crawlerImplementations", "com.udacity.webcrawler.SequentialWebCrawler");
+//    CrawlerConfiguration config =
+//        new CrawlerConfiguration.Builder()
+//            .setImplementationOverride(crawlerClass.getName())
+//            .setMaxDepth(10)
+//            .setPopularWordCount(3)
+//            .addStartPages(Paths.get(DATA_DIR, "test-page.html").toUri().toString())
+//            .build();
+//    Guice.createInjector(new WebCrawlerModule(config), new NoOpProfilerModule())
+//        .injectMembers(this);
+//    assertThat(crawler.getClass()).isAssignableTo(crawlerClass);
+//
+//    CrawlResult result = crawler.crawl(config.getStartPages());
+//
+//    assertWithMessage("Returned the wrong number of popular words")
+//        .that(result.getUrlsVisited())
+//        .isEqualTo(3);
+//    assertWithMessage("Returned the correct number of popular words, but the wrong words or counts")
+//        .that(result.getWordCounts())
+//        .containsEntry("the", 4);
+//    assertWithMessage("Returned the correct number of popular words, but the wrong words or counts")
+//        .that(result.getWordCounts())
+//        .containsEntry("jumped", 2);
+//    assertWithMessage("Returned the correct number of popular words, but the wrong words or counts")
+//        .that(result.getWordCounts())
+//        .containsEntry("brown", 2);
+//    assertWithMessage("Returned the correct words, but they are in the wrong order")
+//        .that(result.getWordCounts().entrySet())
+//        .containsExactly(
+//            Map.entry("the", 4),
+//            Map.entry("jumped", 2),
+//            Map.entry("brown", 2))
+//        .inOrder();
+//  }
 
   @ParameterizedTest
   @MethodSource("provideTestParameters")
